@@ -141,7 +141,12 @@ public class SpeLargeXlsxParser {
 					lastContents = new XSSFRichTextString(sst.getEntryAt(idx)).toString();	
 					cell.setCellValue(lastContents);
 				} else if(cellType == Cell.CELL_TYPE_NUMERIC) {
-					cell.setCellValue(Double.valueOf(lastContents));
+					try {
+						cell.setCellValue(Double.valueOf(lastContents));
+					} catch(Exception e) {
+						cell.setCellValue(lastContents);
+						System.err.println(lastContents + "不是数字类型");	
+					}					
 				} else {
 					System.err.println("未处理情形");
 				}				
