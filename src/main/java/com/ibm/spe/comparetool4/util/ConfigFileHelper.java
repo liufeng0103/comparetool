@@ -44,6 +44,7 @@ public class ConfigFileHelper {
     private static final String FF_SHEET_MAPPING = "FFSheetMapping";
     private static final String MM_SHEET_MAPPING = "MMSheetMapping";
     private static final String COLUMN_MAPPING = "ColumnMapping";
+    private static final String SO_ITS_MAPPING = "SO_ITS";
 
     private static CompareConfig config = new CompareConfig();
 
@@ -60,6 +61,7 @@ public class ConfigFileHelper {
             config.setFfSheetMappings(readFFSheetMapping(wb));
             config.setMmSheetMappings(readMMSheetMapping(wb));
             config.setColumnMappings(readColumnMapping(wb));
+            config.setSoItsMappings(readSOITSMapping(wb));
         } catch (Exception e) {
             MessageDisplay.show(e.getMessage());
             logger.error(e);
@@ -292,6 +294,21 @@ public class ConfigFileHelper {
         }
         return mappings;
     }
+    
+    private static Map<String, String> readSOITSMapping(Workbook wb) {
+        Sheet sheet = wb.getSheet(SO_ITS_MAPPING);
+        Map<String, String> mappings = new HashMap<String, String>();
+        for(Row row : sheet) {
+            String so = row.getCell(0).getStringCellValue();
+            String its = row.getCell(1).getStringCellValue();
+            if ("".equals(so) || "".equals(its)) {
+            	continue;
+            }
+            mappings.put(so, its);
+        }
+        return mappings;
+    }
+    
     private static String getCellValue(Cell cell) {
         String value = "";
         if(cell != null) {

@@ -38,6 +38,10 @@ public class MrtFile extends CompareFileAdapter {
     private static Map<String, List<String>> sheetSeparateKeys = new HashMap<String, List<String>>();
     private String fileName;
     private static List<String> specialSheetName = new ArrayList<String>();
+    private Map<String, String> soItsMapping;
+    
+    private String compareType = CompareTest.MM;
+    
     static {
         specialSheetName.add("STD_FACTORS");
         specialSheetName.add("STD_RATE");
@@ -46,6 +50,17 @@ public class MrtFile extends CompareFileAdapter {
     }
 
     public MrtFile(String fileName) {
+    	soItsMapping = ConfigFileHelper.getConfig().getSoItsMappings();
+        this.fileName = fileName;
+        long startTime = System.currentTimeMillis();
+        ConsoleTextarea.info("Loading mrt file : " + fileName);
+        init(fileName);
+        ConsoleTextarea.info("Complete loading, total time " + (System.currentTimeMillis() - startTime) + "ms");
+    }
+    
+    public MrtFile(String fileName, String compareType) {
+    	this.compareType = compareType;
+    	soItsMapping = ConfigFileHelper.getConfig().getSoItsMappings();
         this.fileName = fileName;
         long startTime = System.currentTimeMillis();
         ConsoleTextarea.info("Loading mrt file : " + fileName);
@@ -65,7 +80,12 @@ public class MrtFile extends CompareFileAdapter {
             }
             Set<String> sheetNames = getAllMrtSheets();
             for (String sheetName : sheetNames) {
+//            	System.out.println(sheetName);
                 Sheet sheet = wb.getSheet(sheetName);
+//                System.out.println(sheet == null);
+                if (sheet == null) {
+                	continue;
+                }
                 sheetRowCounts.put(sheetName, sheet.getLastRowNum());
                 List<String> separatedKeys = new ArrayList<String>();
                 sheetSeparateKeys.put(sheetName, separatedKeys);
@@ -133,9 +153,9 @@ public class MrtFile extends CompareFileAdapter {
         if (specialSheetName.contains(sheetName)) {
             String[] s = cellValue.split("~");
             if(s.length >=4) {
-                String[] s1 = s[1].split("-");
+                String[] s1 = convertSoIdToItsId(s[1]).split("-");
                 keys[0] = s[0] + s1[0] + s1[1] + s[3];
-                String[] s2 = s[2].split("-");
+                String[] s2 = convertSoIdToItsId(s[2]).split("-");
                 keys[1] = s[0] + s2[0] + s2[1] + s[3];
             }
         } else {
@@ -144,6 +164,18 @@ public class MrtFile extends CompareFileAdapter {
         }
         logger.debug(String.format("Convert key[%s] to key[%s] for sheet[%s]", cellValue, keys, sheetName));
         return keys;
+    }
+    
+    private String convertSoIdToItsId(String soId) {
+    	String itsId = soId;
+    	if (CompareTest.MM.equals(compareType)) {
+    		String tmp = soItsMapping.get(soId);
+    		if (tmp != null) {
+    			itsId = tmp;
+//    			System.out.println(itsId);
+    		}
+    	}
+    	return itsId;
     }
 
     @Override
@@ -175,6 +207,9 @@ public class MrtFile extends CompareFileAdapter {
         for(Cell cell : row) {
             ColumnMapping columnMapping = new ColumnMapping();
             String cellValue = getCellValue(cell);
+           	if ("LOOKUP_VALUE".equals(cellValue)) {
+        		continue;
+        	}
             columnMapping.setSheet1Name(sheetName);
             columnMapping.setSheet1ColumnName(cellValue);
             columnMapping.setSheet2Name(sheetName);

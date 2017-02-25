@@ -20,8 +20,17 @@ public class CompareConfig {
     private Vector columnMappingTableColumnNames;
     private List<ColumnMapping> columnMappings;
     private Map<String, String> commonConfigs;
+    private Map<String, String> soItsMappings;
 
-    public void setCountryMappings(List<CountryMapping> countryMappings) {
+    public Map<String, String> getSoItsMappings() {
+		return soItsMappings;
+	}
+
+	public void setSoItsMappings(Map<String, String> soItsMappings) {
+		this.soItsMappings = soItsMappings;
+	}
+
+	public void setCountryMappings(List<CountryMapping> countryMappings) {
         this.countryMappings = countryMappings;
     }
 

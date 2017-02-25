@@ -73,8 +73,10 @@ public class SpeLargeXlsxParser {
 		Map<String, Sheet> speWorkbook = new HashMap<String, Sheet>();		
 		parseWorkbook();		
 		for(String sheetId : sheetIds) {
+//			System.out.println(sheetId);
 			sheet = new SpeSheet();
 			speWorkbook.put(sheetNameId.get(sheetId), sheet);
+//			System.out.println(sheetNameId.get(sheetId));
 			InputStream sheet = xssfReader.getSheet(sheetId);
 			InputSource sheetSource = new InputSource(sheet);
 			xmlParser.parse(sheetSource);
@@ -103,6 +105,7 @@ public class SpeLargeXlsxParser {
 			if("sheet".equals(name)) {
 				String sheetName = attributes.getValue("name");
 				String sheetId = attributes.getValue("r:id");
+//				System.out.println(sheetId + "	" + sheetName);
 				sheetNameId.put(sheetId, sheetName);
 				sheetIds.add(sheetId);				 			
 			}

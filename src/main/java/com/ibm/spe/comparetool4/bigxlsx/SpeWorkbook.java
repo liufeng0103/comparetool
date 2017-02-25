@@ -21,13 +21,15 @@ public class SpeWorkbook extends SpeWorkbookAdapter {
 	
 	@Override
 	public Sheet createSheet(String sheetName) {
-		Sheet sheet = new SpeSheet();		
+		Sheet sheet = new SpeSheet();
+//		System.out.println(sheetName);
 		sheets.put(sheetName, sheet);
 		return sheet;
 	}
 
 	@Override
-	public Sheet getSheet(String sheetName) {		
+	public Sheet getSheet(String sheetName) {	
+//		System.out.println(sheetName + sheets.keySet());
 		return sheets.get(sheetName);
 	}
 

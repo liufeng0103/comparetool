@@ -44,11 +44,11 @@ public class CompareTest {
             List<SheetMapping> mappings = null;
             if(FM.equals(compareType)) {
                 file1 = new FinancialFile(fromFile);
-                file2 = new MrtFile(toFile);
+                file2 = new MrtFile(toFile, FM);
                 mappings = config.getFmSheetMappings();
             } else if(MM.equals(compareType)) {
-                file1 = new MrtFile(fromFile);
-                file2 = new MrtFile(toFile);
+                file1 = new MrtFile(fromFile, MM);
+                file2 = new MrtFile(toFile, MM);
                 mappings = config.getMmSheetMappings();
 
             } else if(FF.equals(compareType)) {
