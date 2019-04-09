@@ -99,6 +99,10 @@ public class MrtFile extends CompareFileAdapter {
                             String[] rowKeys = generateKey(sheetName, row);
                             rowMap.put(rowKeys[0], row);
                             rowMap.put(rowKeys[1], row);
+                            if (rowKeys[0] == null) {
+                            	System.out.println("出错：" + sheetName + " row " + row.getRowNum());
+                            	throw new Exception("出错：" + sheetName + " row " + row.getRowNum());
+                            }
                             if (!rowKeys[0].equals(rowKeys[1])) {
                             	separatedKeys.add(rowKeys[0]);
                             	separatedKeys.add(rowKeys[1]);
@@ -158,9 +162,13 @@ public class MrtFile extends CompareFileAdapter {
                 String[] s2 = convertSoIdToItsId(s[2]).split("-");
                 keys[1] = s[0] + s2[0] + s2[1] + s[3];
             }
+            // US~6943-02K~6943-02K~9646~2015~SFC
         } else {
             keys[0] = cellValue;
             keys[1] = keys[0];
+        }
+        if (keys[0] == null) {
+        	System.out.println("出错：" + sheetName);
         }
         logger.debug(String.format("Convert key[%s] to key[%s] for sheet[%s]", cellValue, keys, sheetName));
         return keys;
